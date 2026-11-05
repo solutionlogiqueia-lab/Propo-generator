@@ -1,4 +1,5 @@
 import { Target } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { totauxProposition } from "@/lib/calc";
 import { conditionsTexte } from "@/lib/conditions";
 import { ICONS, iconKey } from "@/lib/icons";
@@ -19,7 +20,7 @@ export function pagesProjet({ p, settings }: ModelProps): PageFn[] {
   /* P.1 Couverture */
   pages.push((c) => (
     <Sheet {...mp} {...c}>
-      <div className="flex h-full flex-col gap-5">
+      <div className="flex h-full flex-col justify-between gap-5">
         <div className="grid grid-cols-[1.55fr_1fr] gap-5">
           <Hero p={p} />
           <ClientBlock p={p} />
@@ -28,11 +29,11 @@ export function pagesProjet({ p, settings }: ModelProps): PageFn[] {
         {p.projet.contexte && (
           <div className="keep">
             <Kicker>Votre projet</Kicker>
-            <p className="mt-1 text-[13.5px] leading-relaxed text-sl-text [overflow-wrap:anywhere]">{p.projet.contexte}</p>
+            <p className="mt-1 text-[14.5px] leading-relaxed text-sl-text [overflow-wrap:anywhere]">{p.projet.contexte}</p>
           </div>
         )}
         {p.points_cles.length > 0 && (
-          <div className="mt-auto grid gap-3" style={{ gridTemplateColumns: `repeat(${Math.min(p.points_cles.length, 4) <= 3 ? Math.min(p.points_cles.length, 3) : 2}, minmax(0,1fr))` }}>
+          <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${Math.min(p.points_cles.length, 4) <= 3 ? Math.min(p.points_cles.length, 3) : 2}, minmax(0,1fr))` }}>
             {p.points_cles.slice(0, 4).map((pt, i) => (
               <PointCard key={i} pt={pt} i={i} />
             ))}
@@ -48,13 +49,13 @@ export function pagesProjet({ p, settings }: ModelProps): PageFn[] {
     const last = pi === feats.length - 1;
     pages.push((c) => (
       <Sheet {...mp} {...c}>
-        <div className="flex h-full flex-col gap-5">
+        <div className={cn("flex h-full flex-col gap-5", [pi === 0 && p.objectifs, group.length > 0, last && p.benefices.length > 0].filter(Boolean).length >= 3 && "justify-between")}>
           {pi === 0 && p.objectifs && (
-            <div className="keep flex gap-4 rounded-2xl bg-sl-soft p-5">
+            <div className="keep flex gap-4 rounded-2xl bg-sl-soft p-6">
               <Pastille icon="target" tone="primary" />
               <div>
                 <Kicker>Notre objectif</Kicker>
-                <p className="mt-1 text-[16px] font-semibold leading-snug text-sl-text [overflow-wrap:anywhere]">{p.objectifs}</p>
+                <p className="mt-1 text-[18px] font-semibold leading-snug text-sl-text [overflow-wrap:anywhere]">{p.objectifs}</p>
               </div>
             </div>
           )}
@@ -65,7 +66,7 @@ export function pagesProjet({ p, settings }: ModelProps): PageFn[] {
                 {group.map((f, i) => {
                   const Icon = ICONS[iconKey(f.icone, pi * CARDS_PER_PAGE + i + 3)].Icon;
                   return (
-                    <div key={i} className="keep rounded-2xl border border-sl-line p-4">
+                    <div key={i} className="keep rounded-2xl border border-sl-line p-5">
                       <div className="mb-2 flex items-center justify-between gap-2">
                         <span className="grid h-8 w-8 place-items-center rounded-full bg-sl-accent text-white">
                           <Icon className="h-4 w-4" strokeWidth={2.2} />
@@ -73,7 +74,7 @@ export function pagesProjet({ p, settings }: ModelProps): PageFn[] {
                         {f.option && <Badge tone="primary">Option</Badge>}
                       </div>
                       <div className="font-bold leading-snug text-sl-text [overflow-wrap:anywhere]">{f.titre}</div>
-                      <p className="mt-1 line-clamp-5 text-sl-muted [overflow-wrap:anywhere]">{f.description}</p>
+                      <p className="mt-1 line-clamp-4 text-[13px] text-sl-muted [overflow-wrap:anywhere]">{f.description}</p>
                       {f.option && (f.mentionOption || "Option, facturation en sus") && (
                         <p className="mt-1 text-[11px] font-semibold text-sl-primary">{f.mentionOption || "Option, facturation en sus"}</p>
                       )}
@@ -84,7 +85,7 @@ export function pagesProjet({ p, settings }: ModelProps): PageFn[] {
             </div>
           )}
           {last && p.benefices.length > 0 && (
-            <div className="keep mt-auto rounded-2xl bg-sl-primary p-5 text-white">
+            <div className="keep rounded-2xl bg-sl-primary p-6 text-white">
               <div className="mb-3 flex items-center gap-2 text-[15px] font-bold">
                 <Target className="h-4 w-4" /> Ce que vous y gagnez
               </div>
@@ -120,7 +121,8 @@ export function pagesProjet({ p, settings }: ModelProps): PageFn[] {
   /* Dernière page : récapitulatif & validation */
   pages.push((c) => (
     <Sheet {...mp} {...c}>
-      <div className="flex h-full flex-col gap-3">
+      <div className="flex h-full flex-col justify-between gap-3">
+        <div className="flex flex-col gap-3">
         <H2 className="!mb-1" kicker="Récapitulatif">Récapitulatif & validation</H2>
         {inline ? (
           <LignesTable lignes={p.lignes} ttc={p.afficherTTC} tvaTaux={p.tvaTaux} />
@@ -128,7 +130,8 @@ export function pagesProjet({ p, settings }: ModelProps): PageFn[] {
           <p className="text-sl-muted">Le détail ligne à ligne figure aux pages précédentes. Voici le total de l&apos;offre.</p>
         )}
         <TotauxBox t={t} p={p} />
-        <div className="mt-auto flex flex-col gap-3">
+        </div>
+        <div className="flex flex-col gap-3">
           <BonPourAccord p={p} settings={settings} compact />
           <ConditionsList items={conditionsTexte(p, settings).slice(0, -1)} />
         </div>

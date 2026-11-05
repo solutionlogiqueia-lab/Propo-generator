@@ -21,6 +21,14 @@ npm run build    # build de production
 3. *Télécharger en PDF* : ouvre la boîte d'impression du navigateur → « Enregistrer au format PDF », **marges : aucune**, **graphiques d'arrière-plan : activés**. Le titre du document devient le nom du fichier.
 4. *Paramètres* : logo, coordonnées, phrase CGV, TVA, valeurs par défaut des conditions.
 
+## Signature électronique
+
+Section « 7 · Signature électronique » de l'éditeur : le client (bon pour accord) et Solution Logique signent en dessinant (souris, doigt, stylet) ou en saisissant leur nom, après avoir coché la déclaration de consentement.
+La signature, la date et l'heure, le lieu et une **empreinte SHA-256 du contenu** sont imprimés sur la page de validation et dans le PDF. Signer le client passe la proposition au statut « Signée ».
+Si le contenu est modifié après signature, un avertissement s'affiche : il faut retirer la signature et la refaire.
+
+Limites : il s'agit d'une signature électronique **simple** (pas avancée ni qualifiée au sens eIDAS) et d'une signature **en présentiel**. Tout reste dans le navigateur ; l'empreinte prouve ce qui a été signé mais pas l'identité du signataire. Une signature à distance par lien envoyé au client demande un service tiers ou un backend (hors périmètre).
+
 ## Ajouter un 5ᵉ modèle
 
 1. Ajouter l'identifiant dans `ModeleId` (`src/lib/types.ts`).

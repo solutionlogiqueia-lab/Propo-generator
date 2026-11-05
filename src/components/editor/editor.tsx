@@ -1,5 +1,5 @@
 "use client";
-import { ArrowLeft, Briefcase, Calculator, FileText, Gift, ListChecks, Printer, Puzzle, Scale, Sparkles, Users } from "lucide-react";
+import { ArrowLeft, Briefcase, PenLine, Calculator, FileText, Gift, ListChecks, Printer, Puzzle, Scale, Sparkles, Users } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import {
   BeneficesForm, ClientForm, ConditionsForm, FonctionnalitesForm, FormulesForm, LignesForm, PointsForm, ProjetForm,
 } from "./forms";
+import { SignatureForm } from "./signature-form";
 
 const MODEL_ICON: Record<ModeleId, typeof FileText> = { projet: Briefcase, recurrent: Calculator, express: Sparkles, formules: Scale };
 
@@ -160,6 +161,13 @@ export function Editor({ initial, settings }: { initial: Proposition; settings: 
               </div>
             </Section>
             <Section title="6 · Conditions" icon={<ListChecks className="h-4 w-4" />}><ConditionsForm p={p} set={set} /></Section>
+            <Section
+              title="7 · Signature électronique"
+              icon={<PenLine className="h-4 w-4" />}
+              badge={p.signature?.client ? <span className="text-xs font-semibold text-sl-ok">Signée</span> : undefined}
+            >
+              <SignatureForm p={p} set={set} settings={settings} />
+            </Section>
             <Section title="Formules (modèle « Trois formules »)" icon={<Puzzle className="h-4 w-4" />}><FormulesForm p={p} set={set} /></Section>
           </div>
         </div>

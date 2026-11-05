@@ -18,7 +18,7 @@ function ServiceCard({ l }: { l: Ligne }) {
       <div className="line-clamp-2 font-bold leading-snug text-sl-text [overflow-wrap:anywhere]">{l.libelle || "Service"}</div>
       <p className="mt-1 line-clamp-2 text-[11.5px] leading-snug text-sl-muted [overflow-wrap:anywhere]">{l.description}</p>
       <div className="mt-2 flex items-end gap-1.5">
-        <span className="text-[30px] font-bold leading-none tabular-nums text-sl-primary">{eur(l.prixUnitaireHT)}</span>
+        <span className="text-[21px] font-bold leading-none tabular-nums text-sl-primary">{eur(l.prixUnitaireHT)}</span>
         <span className="pb-0.5 text-[11px] text-sl-muted">HT {PERIODE[l.type]}</span>
       </div>
       <div className="mt-1.5 flex min-h-[18px] items-center gap-2 text-[11px] text-sl-muted">
@@ -99,14 +99,14 @@ export function pagesRecurrent({ p, settings }: ModelProps): PageFn[] {
               <div className="keep grid grid-cols-[1.3fr_1fr] gap-3">
                 <div className="rounded-2xl bg-sl-primary p-5 text-white">
                   <div className="text-[10.5px] font-bold uppercase tracking-wider text-white/80">Total mensuel</div>
-                  <div className="mt-1 text-[32px] font-bold leading-none tabular-nums">
+                  <div className="mt-1 text-[22px] font-bold leading-none tabular-nums">
                     {eur(t.mensuel.ht)} <span className="text-[13px] font-semibold">HT / mois</span>
                   </div>
                   {p.afficherTTC && <div className="mt-1 text-[11px] text-white/85">soit {eur(t.mensuel.ttc)} TTC / mois (TVA {p.tvaTaux} %)</div>}
                 </div>
                 <div className="rounded-2xl bg-sl-soft p-5">
                   <div className="text-[10.5px] font-bold uppercase tracking-wider text-sl-primary">Équivalent annuel</div>
-                  <div className="mt-1 text-[24px] font-bold leading-none tabular-nums text-sl-primary">{eur(t.mensuel.ht * 12)} HT</div>
+                  <div className="mt-1 text-[17px] font-bold leading-none tabular-nums text-sl-primary">{eur(t.mensuel.ht * 12)} HT</div>
                   <div className="mt-1 text-[11px] text-sl-muted">
                     Engagement : {eur(t.engagementRecurrentHT)} HT sur {p.conditions.dureeTrimestres} trimestres
                   </div>
@@ -139,7 +139,7 @@ export function pagesRecurrent({ p, settings }: ModelProps): PageFn[] {
   const optsF = p.fonctionnalites.filter((f) => f.option);
   pages.push((cx) => (
     <Sheet {...mp} {...cx}>
-      <div className="flex h-full flex-col gap-4">
+      <div className="flex h-full flex-col justify-between gap-4">
         {inclus.length + optsF.length > 0 && (
           <div>
             <H2 kicker="Votre tranquillité">Ce qui est inclus</H2>
@@ -175,7 +175,7 @@ export function pagesRecurrent({ p, settings }: ModelProps): PageFn[] {
             ))}
           </div>
         </div>
-        <div className="mt-auto flex flex-col gap-3">
+        <div className="flex flex-col gap-3">
           <BonPourAccord p={p} settings={settings} compact />
           <ConditionsList items={conditionsTexte(p, settings).slice(0, -1)} />
         </div>

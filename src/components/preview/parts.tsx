@@ -155,7 +155,7 @@ export function MetaRow({ p, className }: { p: Proposition; className?: string }
 
 export function Hero({ p, compact, className }: { p: Proposition; compact?: boolean; className?: string }) {
   return (
-    <div className={cn("sl-gradient relative overflow-hidden rounded-2xl text-white", compact ? "p-5" : "p-7", className)}>
+    <div className={cn("sl-gradient relative overflow-hidden rounded-2xl text-white", compact ? "p-5" : "flex min-h-[310px] flex-col justify-center p-8", className)}>
       <div className="text-[10.5px] font-bold uppercase tracking-[0.14em] text-white/85">Proposition commerciale</div>
       <h1 className={cn("mt-2 font-bold leading-[1.15] [overflow-wrap:anywhere]", compact ? "line-clamp-2 text-[22px]" : "text-[30px]")}>
         {p.projet.titre || "Titre du projet"}
@@ -225,6 +225,7 @@ export function PrixCell({ l }: { l: Ligne }) {
 /** Tableau de lignes (déjà découpé en pages par l'appelant) avec intitulés de groupe. */
 export function LignesTable({ lignes, ttc, tvaTaux, dense }: { lignes: Ligne[]; ttc?: boolean; tvaTaux: number; dense?: boolean }) {
   const rows = trierLignes(lignes);
+  const pad = dense ? "py-1" : rows.length <= 4 ? "py-3" : rows.length <= 6 ? "py-2" : "py-1";
   return (
     <table className="w-full border-collapse text-[12px]">
       <thead>
@@ -250,7 +251,7 @@ export function LignesTable({ lignes, ttc, tvaTaux, dense }: { lignes: Ligne[]; 
                 </tr>
               )}
               <tr className="keep border-b border-sl-line align-top">
-                <td className="px-3 py-1">
+                <td className={cn("px-3", pad)}>
                   <div className="line-clamp-1 font-semibold text-sl-text [overflow-wrap:anywhere]">
                     {l.libelle || "Désignation"}
                     {l.unite ? <span className="font-normal text-sl-muted"> · {l.unite}</span> : null}
@@ -260,12 +261,12 @@ export function LignesTable({ lignes, ttc, tvaTaux, dense }: { lignes: Ligne[]; 
                   )}
                   {opt && <Badge tone="accent" className="mt-0.5 !py-px">Option, facturation en sus</Badge>}
                 </td>
-                <td className="px-2 py-1 text-center tabular-nums">{l.quantite}</td>
-                <td className="px-2 py-1 text-right tabular-nums">
+                <td className={cn("px-2 text-center tabular-nums", pad)}>{l.quantite}</td>
+                <td className={cn("px-2 text-right tabular-nums", pad)}>
                   <PrixCell l={l} />
                   {!opt && <div className="text-[10px] text-sl-muted">{PERIODE[l.type]}</div>}
                 </td>
-                <td className="px-3 py-1 text-right tabular-nums font-bold">
+                <td className={cn("px-3 text-right tabular-nums font-bold", pad)}>
                   {opt ? (
                     <span className="font-normal text-sl-muted">—</span>
                   ) : (
@@ -294,9 +295,9 @@ export function TotauxBox({ t, p, className }: { t: Totaux; p: Proposition; clas
   return (
     <div className={cn("keep grid gap-3", className)} style={{ gridTemplateColumns: `repeat(${[t.unique.ht > 0, t.mensuel.ht > 0].filter(Boolean).length || 1}, minmax(0,1fr))` }}>
       {t.unique.ht > 0 && (
-        <div className="rounded-2xl bg-sl-primary p-4 text-white">
+        <div className="rounded-2xl bg-sl-primary p-3 text-white">
           <div className="text-[10.5px] font-bold uppercase tracking-wider text-white/80">Mise en œuvre · une fois</div>
-          <div className="mt-1 text-[26px] font-bold leading-none tabular-nums">{eur(t.unique.ht)} <span className="text-[12px] font-semibold">HT</span></div>
+          <div className="mt-1 text-[19px] font-bold leading-none tabular-nums">{eur(t.unique.ht)} <span className="text-[11px] font-semibold">HT</span></div>
           {ttc ? (
             <div className="mt-1 text-[11px] text-white/85">TVA {p.tvaTaux} % : {eur(t.unique.tva)} · soit {eur(t.unique.ttc)} TTC</div>
           ) : (
@@ -305,9 +306,9 @@ export function TotauxBox({ t, p, className }: { t: Totaux; p: Proposition; clas
         </div>
       )}
       {t.mensuel.ht > 0 && (
-        <div className="rounded-2xl bg-sl-soft p-4">
+        <div className="rounded-2xl bg-sl-soft p-3">
           <div className="text-[10.5px] font-bold uppercase tracking-wider text-sl-primary">Abonnements · par mois</div>
-          <div className="mt-1 text-[26px] font-bold leading-none tabular-nums text-sl-primary">{eur(t.mensuel.ht)} <span className="text-[12px] font-semibold">HT / mois</span></div>
+          <div className="mt-1 text-[19px] font-bold leading-none tabular-nums text-sl-primary">{eur(t.mensuel.ht)} <span className="text-[11px] font-semibold">HT / mois</span></div>
           <div className="mt-1 text-[11px] text-sl-muted">
             {ttc ? `TVA ${p.tvaTaux} % : ${eur(t.mensuel.tva)} · soit ${eur(t.mensuel.ttc)} TTC / mois` : `Soit ${eur(t.mensuel.ht * 12)} HT par an`}
           </div>
@@ -316,9 +317,61 @@ export function TotauxBox({ t, p, className }: { t: Totaux; p: Proposition; clas
       {eco > 0 && (
         <div className="col-span-full flex items-center justify-between rounded-xl border border-sl-ok/30 bg-sl-ok/5 px-4 py-1.5 text-sl-ok">
           <span className="font-semibold">Économie réalisée avec cette offre</span>
-          <span className="text-[15px] font-bold tabular-nums">{eur(eco)} HT</span>
+          <span className="text-[13px] font-bold tabular-nums">{eur(eco)} HT</span>
         </div>
       )}
+    </div>
+  );
+}
+
+const heureFr = (iso: string) =>
+  new Date(iso).toLocaleString("fr-FR", { day: "2-digit", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
+export const empreinteCourte = (h: string) => (h.slice(0, 12).match(/.{1,4}/g) ?? []).join("-").toUpperCase();
+
+/** Cases date / signature : vides à compléter à la main, ou remplies si la proposition est signée électroniquement. */
+export function SignatureBoxes({ p, settings, className }: ModelProps & { className?: string }) {
+  const c = p.signature?.client;
+  const sl = p.signature?.societe;
+  return (
+    <div className={cn("keep", className)}>
+      <div className="grid h-full grid-cols-[1fr_1.5fr] gap-3">
+        <div className="flex min-h-0 flex-col justify-between gap-1 overflow-hidden rounded-xl bg-sl-soft p-2.5">
+          <div className="text-[11px] text-sl-muted">Date et lieu</div>
+          {c ? (
+            <div className="text-[11px] font-semibold leading-tight text-sl-text">
+              {c.lieu ? `${c.lieu}, ` : ""}le {dateFr(c.date)}
+            </div>
+          ) : (
+            <div className="text-[11px] text-sl-muted">Le ____ / ____ / ________</div>
+          )}
+          {sl && (
+            <div className="flex min-h-0 items-end gap-1.5">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={sl.image} alt="" className="max-h-[7mm] w-auto object-contain" />
+              <span className="text-[9px] leading-tight text-sl-muted">Pour {settings.nom}</span>
+            </div>
+          )}
+        </div>
+        <div className="flex min-h-0 flex-col overflow-hidden rounded-xl bg-sl-soft p-2.5">
+          {c ? (
+            <>
+              <div className="text-[10px] text-sl-muted">
+                Bon pour accord · <b className="text-sl-text">{c.nom}</b>
+                {c.fonction ? `, ${c.fonction}` : ""}
+              </div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={c.image} alt={`Signature de ${c.nom}`} className="min-h-0 flex-1 self-start object-contain object-left" />
+              <div className="text-[8.5px] leading-tight text-sl-muted">
+                Signé électroniquement le {heureFr(c.date)} · empreinte {empreinteCourte(c.empreinte)}
+              </div>
+            </>
+          ) : (
+            <div className="text-[11px] text-sl-muted">
+              Cachet et signature de {p.client.organisation || "l'organisation"}, précédés de la mention « Bon pour accord »
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -342,17 +395,7 @@ export function BonPourAccord({ p, settings, formules, compact }: ModelProps & {
           ))}
         </div>
       )}
-      <div className={cn("mt-3 grid grid-cols-[1fr_1.5fr] gap-4", compact ? "h-[17mm]" : "h-[30mm]")}>
-        <div className="flex flex-col justify-between rounded-xl bg-sl-soft p-3">
-          <div className="text-[11px] text-sl-muted">Date et lieu</div>
-          <div className="text-[11px] text-sl-muted">Le ____ / ____ / ________</div>
-        </div>
-        <div className="flex flex-col rounded-xl bg-sl-soft p-3">
-          <div className="text-[11px] text-sl-muted">
-            Cachet et signature de {p.client.organisation || "l'organisation"}, précédés de la mention « Bon pour accord »
-          </div>
-        </div>
-      </div>
+      <SignatureBoxes p={p} settings={settings} className={cn("mt-3", compact ? "h-[23mm]" : "h-[30mm]")} />
       <p className="mt-2 text-[10px] leading-snug text-sl-muted">{settings.phraseCgv}</p>
     </div>
   );

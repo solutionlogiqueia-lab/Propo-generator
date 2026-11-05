@@ -3,7 +3,7 @@ import { estOption, totauxProposition } from "@/lib/calc";
 import { dateValidite } from "@/lib/calc";
 import { dateFr, eur } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import { CheckItem, ClientBlock, Hero, LignesTable, Sheet, type ModelProps, type PageFn } from "./parts";
+import { CheckItem, ClientBlock, Hero, LignesTable, Sheet, SignatureBoxes, type ModelProps, type PageFn } from "./parts";
 
 const MAX_ROWS = 6;
 
@@ -44,14 +44,14 @@ export function pagesExpress({ p, settings }: ModelProps): PageFn[] {
             {t.unique.ht > 0 && (
               <div className="rounded-2xl bg-sl-primary p-3 text-white">
                 <div className="text-[10.5px] font-bold uppercase tracking-wider text-white/80">Total · une fois</div>
-                <div className="text-[26px] font-bold leading-none tabular-nums">{eur(t.unique.ht)} <span className="text-[13px]">HT</span></div>
+                <div className="text-[19px] font-bold leading-none tabular-nums">{eur(t.unique.ht)} <span className="text-[12px]">HT</span></div>
                 {p.afficherTTC && <div className="mt-1 text-[11px] text-white/85">soit {eur(t.unique.ttc)} TTC</div>}
               </div>
             )}
             {t.mensuel.ht > 0 && (
               <div className="rounded-2xl bg-sl-soft p-3">
                 <div className="text-[10.5px] font-bold uppercase tracking-wider text-sl-primary">Total · par mois</div>
-                <div className="text-[26px] font-bold leading-none tabular-nums text-sl-primary">{eur(t.mensuel.ht)} <span className="text-[13px]">HT</span></div>
+                <div className="text-[19px] font-bold leading-none tabular-nums text-sl-primary">{eur(t.mensuel.ht)} <span className="text-[12px]">HT</span></div>
                 {p.afficherTTC && <div className="mt-1 text-[11px] text-sl-muted">soit {eur(t.mensuel.ttc)} TTC / mois</div>}
               </div>
             )}
@@ -62,10 +62,7 @@ export function pagesExpress({ p, settings }: ModelProps): PageFn[] {
               <div className="font-bold">Validez en signant ci-dessous</div>
               <div className="ml-auto text-[11px] text-white/90">Valable jusqu&apos;au {dateFr(dateValidite(p))}</div>
             </div>
-            <div className="keep grid h-[20mm] grid-cols-[1fr_2fr] gap-3">
-              <div className="rounded-xl border border-sl-line bg-sl-soft p-2 text-[10.5px] text-sl-muted">Date : ____ / ____ / ________</div>
-              <div className="rounded-xl border border-sl-line bg-sl-soft p-2 text-[10.5px] text-sl-muted">Cachet et signature, précédés de « Bon pour accord »</div>
-            </div>
+            <SignatureBoxes p={p} settings={settings} className="h-[20mm]" />
             <p className="line-clamp-3 text-[10px] leading-snug text-sl-muted [overflow-wrap:anywhere]">
               {t.unique.ht > 0 && `Acompte ${c.acomptePct} % à la commande, solde ${c.soldeA}. `}
               {t.mensuel.ht > 0 && c.tacitReconduction && `Reconduction tacite, préavis ${c.preavisJours} jours. `}

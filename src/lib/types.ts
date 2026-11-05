@@ -2,6 +2,15 @@ export type TypeLigne = "unique" | "mensuel" | "trimestriel" | "annuel" | "optio
 export type ModeleId = "projet" | "recurrent" | "express" | "formules";
 export type Statut = "brouillon" | "envoyee" | "signee";
 
+export type Signataire = {
+  nom: string;
+  fonction?: string;
+  lieu?: string;
+  image: string; // PNG (data URL) : tracé ou nom saisi
+  date: string; // ISO, horodatage de la signature
+  empreinte: string; // SHA-256 du contenu de la proposition au moment de la signature
+};
+
 export type Ligne = {
   id: string;
   libelle: string;
@@ -70,6 +79,8 @@ export type Proposition = {
   modele: ModeleId;
   formulesIntro?: string; // « Comment nous avons construit ces formules »
   formules?: Formule[];
+  /** Signature électronique simple : client (bon pour accord) et Solution Logique. */
+  signature?: { client?: Signataire; societe?: Signataire };
 };
 
 export type Settings = {

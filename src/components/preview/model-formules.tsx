@@ -17,12 +17,14 @@ export function pagesFormules({ p, settings }: ModelProps): PageFn[] {
   const defaut = formules.find((f) => f.recommandee) ?? formules[0];
   const lignesDefaut = defaut ? p.lignes.filter((l) => defaut.lignesIds.includes(l.id)) : p.lignes;
   const tDefaut = totauxFormule(p, defaut ? defaut.lignesIds : p.lignes.map((l) => l.id));
+  const maxArgs = Math.max(0, ...formules.map((f) => f.arguments.filter(Boolean).length));
+  const matriceRows = maxArgs <= 3 ? 7 : maxArgs <= 5 ? 4 : 0; // budget de hauteur : la matrice cède la place aux colonnes
   const pages: PageFn[] = [];
 
   /* P.1 */
   pages.push((c) => (
     <Sheet {...mp} {...c}>
-      <div className="flex h-full flex-col gap-5">
+      <div className="flex h-full flex-col justify-between gap-5">
         <div className="grid grid-cols-[1.55fr_1fr] gap-5">
           <Hero p={p} />
           <ClientBlock p={p} />
@@ -31,7 +33,7 @@ export function pagesFormules({ p, settings }: ModelProps): PageFn[] {
         {p.projet.contexte && (
           <div className="keep">
             <Kicker>Votre besoin</Kicker>
-            <p className="mt-1 text-[13.5px] leading-relaxed [overflow-wrap:anywhere]">{p.projet.contexte}</p>
+            <p className="mt-1 text-[14.5px] leading-relaxed [overflow-wrap:anywhere]">{p.projet.contexte}</p>
           </div>
         )}
         <div className="keep rounded-2xl bg-sl-soft p-5">
@@ -41,7 +43,7 @@ export function pagesFormules({ p, settings }: ModelProps): PageFn[] {
           </p>
         </div>
         {p.points_cles.length > 0 && (
-          <div className="mt-auto grid gap-3" style={{ gridTemplateColumns: `repeat(${Math.min(p.points_cles.length, 3)}, minmax(0,1fr))` }}>
+          <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${Math.min(p.points_cles.length, 3)}, minmax(0,1fr))` }}>
             {p.points_cles.slice(0, 3).map((pt, i) => (
               <PointCard key={i} pt={pt} i={i} />
             ))}
@@ -82,13 +84,13 @@ export function pagesFormules({ p, settings }: ModelProps): PageFn[] {
                 <div className="mt-4 space-y-2">
                   {t.unique.ht > 0 && (
                     <div>
-                      <span className="text-[28px] font-bold leading-none tabular-nums">{eur(t.unique.ht)}</span>
+                      <span className="text-[20px] font-bold leading-none tabular-nums">{eur(t.unique.ht)}</span>
                       <span className={cn("ml-1 text-[11px]", rec ? "text-white/85" : "text-sl-muted")}>HT · une fois</span>
                     </div>
                   )}
                   {t.mensuel.ht > 0 && (
                     <div>
-                      <span className={cn("font-bold tabular-nums", t.unique.ht > 0 ? "text-[17px]" : "text-[28px]")}>
+                      <span className={cn("font-bold tabular-nums", t.unique.ht > 0 ? "text-[14px]" : "text-[20px]")}>
                         {t.unique.ht > 0 ? "+ " : ""}{eur(t.mensuel.ht)}
                       </span>
                       <span className={cn("ml-1 text-[11px]", rec ? "text-white/85" : "text-sl-muted")}>HT / mois</span>
@@ -122,7 +124,43 @@ export function pagesFormules({ p, settings }: ModelProps): PageFn[] {
           })}
         </div>
       )}
-      <p className="mt-6 text-[10.5px] text-sl-muted">
+      {formules.length > 0 && matriceRows > 0 && (
+        <div className="keep mt-8">
+          <Kicker className="mb-2">Ce qui est inclus dans chaque formule</Kicker>
+          <table className="w-full border-collapse text-[12px]">
+            <thead>
+              <tr className="bg-sl-soft text-left text-[10.5px] uppercase tracking-wide text-sl-primary">
+                <th className="rounded-tl-lg px-3 py-1.5 font-semibold">Prestation</th>
+                {formules.map((f, i) => (
+                  <th key={i} className="w-[16%] px-2 py-1.5 text-center font-semibold">{f.nom || `Formule ${String.fromCharCode(65 + i)}`}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {p.lignes.slice(0, matriceRows).map((l) => (
+                <tr key={l.id} className="keep border-b border-sl-line">
+                  <td className="px-3 py-1.5">
+                    <span className="line-clamp-1 font-medium text-sl-text [overflow-wrap:anywhere]">{l.libelle}</span>
+                  </td>
+                  {formules.map((f, i) => (
+                    <td key={i} className="px-2 py-1.5 text-center">
+                      {f.lignesIds.includes(l.id) ? (
+                        <span className="inline-grid h-4 w-4 place-items-center rounded-full bg-sl-accent text-white">
+                          <Check className="h-3 w-3" strokeWidth={3.5} />
+                        </span>
+                      ) : (
+                        <span className="text-sl-muted">·</span>
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {p.lignes.length > matriceRows && <p className="mt-1 text-[10.5px] text-sl-muted">+ {p.lignes.length - matriceRows} autre(s) ligne(s) : voir le détail à la page suivante.</p>}
+        </div>
+      )}
+      <p className="mt-5 text-[10.5px] text-sl-muted">
         Prix hors taxes. Les options sont facturées en sus. Économie calculée sur la durée d&apos;engagement de {p.conditions.dureeTrimestres} trimestres.
       </p>
     </Sheet>
@@ -142,11 +180,13 @@ export function pagesFormules({ p, settings }: ModelProps): PageFn[] {
   }
   pages.push((c) => (
     <Sheet {...mp} {...c}>
-      <div className="flex h-full flex-col gap-4">
+      <div className="flex h-full flex-col justify-between gap-4">
+        <div className="flex flex-col gap-4">
         <H2 kicker="Validation">{`Formule ${defaut?.nom ?? ""} : détail et accord`}</H2>
         {inline ? <LignesTable lignes={lignesDefaut} ttc={p.afficherTTC} tvaTaux={p.tvaTaux} /> : null}
         <TotauxBox t={tDefaut} p={p} />
-        <div className="mt-auto flex flex-col gap-3">
+        </div>
+        <div className="flex flex-col gap-3">
           <BonPourAccord p={p} settings={settings} formules={formules} />
           <ConditionsList items={conditionsTexte(p, settings).slice(0, -1)} />
         </div>
