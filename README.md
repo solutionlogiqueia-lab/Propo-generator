@@ -1,0 +1,42 @@
+# Propositions commerciales · Solution Logique
+
+Générateur de propositions commerciales : formulaire → aperçu A4 en direct → 1 modèle parmi 4 → export PDF.
+100 % local (aucun backend, aucune base, aucun appel réseau) : données dans le `localStorage`, export/import JSON.
+
+## Installation et lancement
+
+```bash
+npm install
+npm run dev      # http://localhost:3000
+npm test         # calculs de prix + conformité des couleurs
+npm run build    # build de production
+```
+
+**Logo** : déposer le fichier dans `public/assets/logo.png` (extrait du .docx : `word/media/image2.png`), ou l'importer dans *Paramètres*. Sans logo, un mot-symbole « SOLUTION LOGIQUE » est affiché.
+
+## Utilisation
+
+1. *Propositions* : créer, rechercher, dupliquer, supprimer, changer le statut, exporter/importer en JSON.
+2. *Éditeur* : sections repliables à gauche, aperçu à droite, 4 vignettes de modèle. Changer de modèle ne perd aucune donnée. Sauvegarde automatique.
+3. *Télécharger en PDF* : ouvre la boîte d'impression du navigateur → « Enregistrer au format PDF », **marges : aucune**, **graphiques d'arrière-plan : activés**. Le titre du document devient le nom du fichier.
+4. *Paramètres* : logo, coordonnées, phrase CGV, TVA, valeurs par défaut des conditions.
+
+## Ajouter un 5ᵉ modèle
+
+1. Ajouter l'identifiant dans `ModeleId` (`src/lib/types.ts`).
+2. Créer `src/components/preview/model-xxx.tsx` exportant `pagesXxx({ p, settings }): PageFn[]` (une fonction par page, enveloppée dans `<Sheet>`). S'inspirer de `model-express.tsx`.
+3. L'enregistrer dans `MODELES` (`src/components/preview/document.tsx`) : la vignette de l'éditeur apparaît automatiquement (ajouter son icône dans `MODEL_ICON`, `editor.tsx`).
+
+Un bandeau rouge signale dans l'aperçu toute page dont le contenu déborde.
+
+## Choix et hypothèses (cahier des charges ambigu → option la plus simple)
+
+- **shadcn/ui** : composants minimaux écrits à la main dans le même esprit (cva + tailwind-merge), sans CLI.
+- **Champs ajoutés** au modèle : `benefices` (« Ce que vous y gagnez », jamais pré-rempli avec des chiffres inventés), `formulesIntro`, `projet.visuel`, `afficherTTC`, `statut`, `icone`.
+- **Économie réalisée** : somme de `(ancien − prix) × quantité` sur les lignes hors options ; les lignes récurrentes sont ramenées au mois puis multipliées par la durée d'engagement (3 × trimestres).
+- **Acompte / solde** : calculés sur le total « mise en œuvre » (lignes uniques).
+- **Prix des formules (modèle 4)** : somme des lignes cochées ; options exclues. Le détail de la page 3 porte sur la formule recommandée (sinon la première).
+- **Pagination** : si le contenu dépasse (plus de 8 lignes de prix, plus de 6 fonctionnalités…), des pages de suite sont ajoutées automatiquement. Le modèle Express est limité à 6 lignes (les suivantes sont comptées dans les totaux).
+- **Démo** : quantités fixées à 1 ; l'option « prise de rendez-vous » est à 0 € (« Sur demande ») faute de tarif fourni ; adresse et contact du client volontairement génériques.
+- **Couleurs** : seules celles du §3 + vert/rouge discrets ; un test (`colors.test.ts`) le vérifie.
+- **Police** : Inter (fichier local via `next/font/local`, aucun appel à Google Fonts).

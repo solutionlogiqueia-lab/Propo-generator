@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+/* ── Tokens de marque Solution Logique (aucune autre couleur de marque) ── */
+:root {
+  --sl-primary: #2200c1;
+  --sl-accent: #3399ff;
+  --sl-soft: #f4f7ff;
+  --sl-text: #0f172a;
+  --sl-muted: #475569;
+  --sl-line: #e2e8f0;
+  --sl-ok: #15803d; /* économie réalisée */
+  --sl-warn: #b91c1c; /* alerte */
+}
+
+@theme inline {
+  --color-sl-primary: var(--sl-primary);
+  --color-sl-accent: var(--sl-accent);
+  --color-sl-soft: var(--sl-soft);
+  --color-sl-text: var(--sl-text);
+  --color-sl-muted: var(--sl-muted);
+  --color-sl-line: var(--sl-line);
+  --color-sl-ok: var(--sl-ok);
+  --color-sl-warn: var(--sl-warn);
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+}
+
+body {
+  background: var(--sl-soft);
+  color: var(--sl-text);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+.sl-gradient {
+  background: linear-gradient(120deg, var(--sl-primary) 0%, var(--sl-accent) 100%);
+}
+
+/* ── Feuille A4 (aperçu = impression) ── */
+.sheet {
+  position: relative;
+  width: 210mm;
+  height: 296.5mm;
+  background: #fff;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--sl-text);
+  break-inside: avoid;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+.sheet * {
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+.keep { break-inside: avoid; page-break-inside: avoid; }
+
+@page { size: A4; margin: 0; }
+
+@media print {
+  html, body { background: #fff !important; margin: 0; padding: 0; }
+  .no-print { display: none !important; }
+  .print-root { display: block !important; width: 210mm !important; padding: 0 !important; margin: 0 !important; overflow: visible !important; height: auto !important; }
+  .preview-zoom { zoom: 1 !important; transform: none !important; width: 210mm !important; height: auto !important; }
+  .doc-page { break-after: page; margin: 0 !important; }
+  .doc-page:last-child { break-after: auto; }
+  .sheet { margin: 0 !important; box-shadow: none !important; }
+}
+
+@media screen {
+  .preview-zoom .sheet { box-shadow: 0 2px 14px rgba(15, 23, 42, 0.18); }
+}
