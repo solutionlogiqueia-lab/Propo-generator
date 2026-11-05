@@ -57,7 +57,7 @@ export function pagesExpress({ p, settings }: ModelProps): PageFn[] {
             )}
           </div>
           <div className="mt-auto flex flex-col gap-2">
-            <div className="sl-gradient keep flex items-center gap-3 rounded-xl px-4 py-2.5 text-white">
+            <div className="bg-sl-primary keep flex items-center gap-3 rounded-xl px-4 py-2.5 text-white">
               <PenLine className="h-5 w-5" />
               <div className="font-bold">Validez en signant ci-dessous</div>
               <div className="ml-auto text-[11px] text-white/90">Valable jusqu&apos;au {dateFr(dateValidite(p))}</div>

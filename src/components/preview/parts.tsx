@@ -26,7 +26,7 @@ export function Logo({ settings, className }: { settings: Settings; className?: 
   if (failed && !settings.logo) {
     return (
       <div className={cn("flex items-center gap-2 font-extrabold tracking-tight text-sl-primary", className)}>
-        <span className="sl-gradient grid h-7 w-7 place-items-center rounded-lg text-sm text-white">S</span>
+        <span className="bg-sl-primary grid h-7 w-7 place-items-center rounded-lg text-sm text-white">S</span>
         <span className="text-[15px] leading-none">{settings.nom}</span>
       </div>
     );
@@ -199,7 +199,7 @@ export function Atouts({ settings, className }: { settings: Settings; className?
 
 export function Hero({ p, compact, className }: { p: Proposition; compact?: boolean; className?: string }) {
   return (
-    <div className={cn("sl-gradient relative overflow-hidden rounded-2xl text-white", compact ? "p-5" : "flex min-h-[310px] flex-col justify-center p-8", className)}>
+    <div className={cn("bg-sl-primary relative overflow-hidden rounded-2xl text-white", compact ? "p-5" : "flex min-h-[310px] flex-col justify-center p-8", className)}>
       <div className="text-[10.5px] font-bold uppercase tracking-[0.14em] text-white/85">Proposition commerciale</div>
       <h1 className={cn("mt-2 font-bold leading-[1.15] [overflow-wrap:anywhere]", compact ? "line-clamp-2 text-[22px]" : "text-[30px]")}>
         {p.projet.titre || "Titre du projet"}
