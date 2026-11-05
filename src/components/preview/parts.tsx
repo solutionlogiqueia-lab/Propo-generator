@@ -3,8 +3,9 @@ import { Check, Pencil } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import type { Ligne, Proposition, Settings } from "@/lib/types";
-import { estOption, estRecurrent, montantLigne, remisePct, type Totaux } from "@/lib/calc";
+import { calculerTotaux, dateValidite, estOption, estRecurrent, montantLigne, remisePct, type Totaux } from "@/lib/calc";
 import { dateFr, eur } from "@/lib/format";
+import { interlocuteur } from "@/lib/vente";
 import { ICONS, iconKey } from "@/lib/icons";
 
 export type PageCtx = { n: number; total: number };
@@ -135,21 +136,64 @@ export function ClientBlock({ p, className }: { p: Proposition; className?: stri
   );
 }
 
-export function MetaRow({ p, className }: { p: Proposition; className?: string }) {
-  const items = [
+export function MetaRow({ p, settings, className }: ModelProps & { className?: string }) {
+  const com = interlocuteur(p, settings);
+  const items: [string, string][] = [
     ["Date", dateFr(p.date)],
-    ["N° de proposition", p.numero],
-    ["Validité", `${p.validiteJours} jours`],
+    ["Offre valable jusqu'au", dateFr(dateValidite(p))],
+    com ? ["Votre interlocuteur", [com.nom, com.tel].filter(Boolean).join(" · ")] : ["N° de proposition", p.numero],
   ];
   return (
     <div className={cn("grid grid-cols-3 gap-3", className)}>
       {items.map(([k, v]) => (
-        <div key={k} className="rounded-xl border border-sl-line px-3 py-2">
+        <div key={k} className="min-w-0 rounded-xl border border-sl-line px-3 py-2">
           <div className="text-[10.5px] uppercase tracking-wide text-sl-muted">{k}</div>
-          <div className="font-semibold text-sl-text">{v}</div>
+          <div className="line-clamp-1 font-semibold text-sl-text [overflow-wrap:anywhere]">{v}</div>
         </div>
       ))}
     </div>
+  );
+}
+
+/** « Et ensuite ? » : 3 étapes déduites des conditions saisies (rien d'inventé). */
+export function Etapes({ p, className }: { p: Proposition; className?: string }) {
+  const c = p.conditions;
+  const t = calculerTotaux(p.lignes, p.tvaTaux, c);
+  const etapes: [string, string][] = [
+    ["Vous validez", `Signez la proposition avant le ${dateFr(dateValidite(p))}.`],
+    t.unique.ht > 0
+      ? ["Nous démarrons", `Acompte de ${c.acomptePct} % à la commande (${eur(t.acompteHT)} HT).`]
+      : ["Nous démarrons", "Mise en service de vos abonnements dès la signature."],
+    ["Vous en profitez", c.delai?.trim() || (t.unique.ht > 0 ? `Livraison, puis solde ${c.soldeA}.` : "Suivi et assistance inclus selon votre contrat.")],
+  ];
+  return (
+    <div className={cn("keep rounded-2xl border border-sl-line p-4", className)}>
+      <Kicker className="mb-3">Et ensuite ? Trois étapes</Kicker>
+      <ol className="grid grid-cols-3 gap-4">
+        {etapes.map(([titre, texte], i) => (
+          <li key={i} className="flex gap-2.5">
+            <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-sl-primary text-[13px] font-bold text-white">{i + 1}</span>
+            <div className="min-w-0">
+              <div className="font-bold leading-tight text-sl-text">{titre}</div>
+              <p className="mt-0.5 line-clamp-3 text-[11.5px] leading-snug text-sl-muted [overflow-wrap:anywhere]">{texte}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+/** « Pourquoi nous choisir » : uniquement ce que l'utilisateur a renseigné dans les Paramètres. */
+export function Atouts({ settings, className }: { settings: Settings; className?: string }) {
+  const items = settings.atouts.map((a) => a.trim()).filter(Boolean).slice(0, 4);
+  if (!items.length) return null;
+  return (
+    <ul className={cn("keep flex flex-wrap gap-x-5 gap-y-1.5 rounded-2xl bg-sl-soft px-4 py-3 text-[12px] font-semibold text-sl-text", className)}>
+      {items.map((a, i) => (
+        <CheckItem key={i}>{a}</CheckItem>
+      ))}
+    </ul>
   );
 }
 
@@ -316,7 +360,7 @@ export function TotauxBox({ t, p, className }: { t: Totaux; p: Proposition; clas
       )}
       {eco > 0 && (
         <div className="col-span-full flex items-center justify-between rounded-xl border border-sl-ok/30 bg-sl-ok/5 px-4 py-1.5 text-sl-ok">
-          <span className="font-semibold">Économie réalisée avec cette offre</span>
+          <span className="font-semibold">Économie réalisée · offre valable jusqu&apos;au {dateFr(dateValidite(p))}</span>
           <span className="text-[13px] font-bold tabular-nums">{eur(eco)} HT</span>
         </div>
       )}

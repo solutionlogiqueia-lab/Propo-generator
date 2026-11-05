@@ -57,6 +57,8 @@ const getSettings = memo<Settings>(KEY_SETTINGS, (raw) => {
     ...DEFAULT_SETTINGS,
     ...s,
     conditionsDefaut: { ...DEFAULT_SETTINGS.conditionsDefaut, ...(s.conditionsDefaut ?? {}) },
+    commercial: { ...DEFAULT_SETTINGS.commercial, ...(s.commercial ?? {}) },
+    atouts: s.atouts ?? [],
   };
 });
 const getProps = memo<Proposition[]>(KEY_PROPS, (raw) =>

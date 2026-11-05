@@ -1,6 +1,8 @@
 export type TypeLigne = "unique" | "mensuel" | "trimestriel" | "annuel" | "option";
 export type ModeleId = "projet" | "recurrent" | "express" | "formules";
-export type Statut = "brouillon" | "envoyee" | "signee";
+export type Statut = "brouillon" | "envoyee" | "signee" | "refusee";
+
+export type Interlocuteur = { nom: string; fonction?: string; tel?: string; email?: string };
 
 export type Signataire = {
   nom: string;
@@ -32,6 +34,9 @@ export type Formule = {
 export type Proposition = {
   id: string;
   statut: Statut;
+  envoyeLe?: string; // date d'envoi (relance J+7)
+  /** Commercial en charge ; à défaut, celui des paramètres. */
+  commercial?: Interlocuteur;
   creeLe: string;
   modifieLe: string;
   numero: string; // PROP-2026-001
@@ -74,6 +79,7 @@ export type Proposition = {
     preavisJours: number;
     reactualisationAnnuelle: boolean;
     prelevementMaintenance: boolean;
+    delai?: string; // ex. « Livraison sous 6 semaines après acompte »
     texteLibre?: string;
   };
   modele: ModeleId;
@@ -95,4 +101,6 @@ export type Settings = {
   conditionsDefaut: Proposition["conditions"];
   validiteJoursDefaut: number;
   prefixeNumero: string; // « PROP »
+  commercial: Interlocuteur; // interlocuteur par défaut des propositions
+  atouts: string[]; // « Pourquoi nous choisir » (4 max), à renseigner : jamais pré-rempli
 };

@@ -21,6 +21,16 @@ npm run build    # build de production
 3. *Télécharger en PDF* : ouvre la boîte d'impression du navigateur → « Enregistrer au format PDF », **marges : aucune**, **graphiques d'arrière-plan : activés**. Le titre du document devient le nom du fichier.
 4. *Paramètres* : logo, coordonnées, phrase CGV, TVA, valeurs par défaut des conditions.
 
+## Outils de vente
+
+- **Suivi** (page Propositions) : statuts Brouillon / Envoyée / Signée / Refusée, tuiles « en attente », « signées », « à relancer (J+7) » et taux de signature. La date d'envoi est posée au passage en « Envoyée ».
+- **Mail d'envoi** : bouton dans l'éditeur, copie un mail prêt à coller (montants réels, économie, date de validité).
+- **Interlocuteur** : nom et téléphone direct du commercial sur la couverture (Paramètres, modifiable par proposition).
+- **Et ensuite ? Trois étapes** : déduites des conditions saisies (+ délai de mise en œuvre facultatif).
+- **Pourquoi nous choisir** : atouts saisis dans Paramètres, affichés seulement s'ils existent. Rien n'est pré-rempli.
+- **Urgence** : la ligne « Économie réalisée » rappelle la date de fin de validité de l'offre.
+- Ces blocs de couverture s'effacent automatiquement si la page est déjà pleine (texte de contexte long, plus de 3 points clés).
+
 ## Signature électronique
 
 Section « 7 · Signature électronique » de l'éditeur : le client (bon pour accord) et Solution Logique signent en dessinant (souris, doigt, stylet) ou en saisissant leur nom, après avoir coché la déclaration de consentement.

@@ -12,6 +12,8 @@ export const DEFAULT_SETTINGS: Settings = {
   tvaTaux: 20,
   validiteJoursDefaut: 30,
   prefixeNumero: "PROP",
+  commercial: { nom: "" },
+  atouts: [],
   conditionsDefaut: {
     acomptePct: 40,
     soldeA: "à la livraison",

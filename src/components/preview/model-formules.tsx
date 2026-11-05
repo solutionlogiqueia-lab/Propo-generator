@@ -4,7 +4,7 @@ import { conditionsTexte } from "@/lib/conditions";
 import { eur } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import {
-  Badge, BonPourAccord, CheckItem, chunk, ClientBlock, ConditionsList, H2, Hero, Kicker, LignesTable, MetaRow,
+  Atouts, Badge, BonPourAccord, CheckItem, chunk, ClientBlock, ConditionsList, H2, Hero, Kicker, LignesTable, MetaRow,
   PointCard, Sheet, TotauxBox, type ModelProps, type PageFn,
 } from "./parts";
 
@@ -19,6 +19,7 @@ export function pagesFormules({ p, settings }: ModelProps): PageFn[] {
   const tDefaut = totauxFormule(p, defaut ? defaut.lignesIds : p.lignes.map((l) => l.id));
   const maxArgs = Math.max(0, ...formules.map((f) => f.arguments.filter(Boolean).length));
   const matriceRows = maxArgs <= 3 ? 7 : maxArgs <= 5 ? 4 : 0; // budget de hauteur : la matrice cède la place aux colonnes
+  const roomy = p.projet.contexte.length <= 260 && p.points_cles.length <= 3 && (p.formulesIntro ?? "").length <= 220;
   const pages: PageFn[] = [];
 
   /* P.1 */
@@ -29,7 +30,7 @@ export function pagesFormules({ p, settings }: ModelProps): PageFn[] {
           <Hero p={p} />
           <ClientBlock p={p} />
         </div>
-        <MetaRow p={p} />
+        <MetaRow p={p} settings={settings} />
         {p.projet.contexte && (
           <div className="keep">
             <Kicker>Votre besoin</Kicker>
@@ -42,6 +43,7 @@ export function pagesFormules({ p, settings }: ModelProps): PageFn[] {
             {p.formulesIntro || "Décrivez ici la logique des formules : de l'essentiel au plus complet, pour choisir selon votre besoin."}
           </p>
         </div>
+        {roomy && <Atouts settings={settings} />}
         {p.points_cles.length > 0 && (
           <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${Math.min(p.points_cles.length, 3)}, minmax(0,1fr))` }}>
             {p.points_cles.slice(0, 3).map((pt, i) => (

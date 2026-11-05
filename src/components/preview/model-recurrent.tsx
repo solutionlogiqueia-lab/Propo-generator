@@ -3,7 +3,7 @@ import { equivalentMensuel, estOption, estRecurrent, remisePct, totauxPropositio
 import { conditionsTexte } from "@/lib/conditions";
 import { eur } from "@/lib/format";
 import {
-  Badge, BonPourAccord, CheckItem, chunk, ClientBlock, ConditionsList, H2, Hero, Kicker, PERIODE,
+  Badge, BonPourAccord, CheckItem, chunk, Etapes, ClientBlock, ConditionsList, H2, Hero, Kicker, PERIODE,
   PointCard, Sheet, type ModelProps, type PageFn,
 } from "./parts";
 import type { Ligne } from "@/lib/types";
@@ -175,6 +175,7 @@ export function pagesRecurrent({ p, settings }: ModelProps): PageFn[] {
             ))}
           </div>
         </div>
+        {inclus.length + optsF.length <= 6 && <Etapes p={p} />}
         <div className="flex flex-col gap-3">
           <BonPourAccord p={p} settings={settings} compact />
           <ConditionsList items={conditionsTexte(p, settings).slice(0, -1)} />

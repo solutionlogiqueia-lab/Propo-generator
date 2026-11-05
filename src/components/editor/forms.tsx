@@ -7,7 +7,7 @@ import { remisePct } from "@/lib/calc";
 import { ICONS, ICON_KEYS } from "@/lib/icons";
 import { fileToDataUrl } from "@/lib/image";
 import { uid } from "@/lib/format";
-import type { Formule, Ligne, Proposition } from "@/lib/types";
+import type { Formule, Ligne, Proposition, Settings } from "@/lib/types";
 
 export type FormProps = { p: Proposition; set: (fn: (p: Proposition) => Proposition) => void };
 
@@ -229,6 +229,24 @@ export function LignesForm({ p, set }: FormProps) {
   );
 }
 
+/* ───────── Interlocuteur commercial ───────── */
+export function InterlocuteurForm({ p, set, settings }: FormProps & { settings: Settings }) {
+  const c = p.commercial ?? { nom: "" };
+  const up = (patch: Partial<NonNullable<Proposition["commercial"]>>) => set((x) => ({ ...x, commercial: { ...(x.commercial ?? { nom: "" }), ...patch } }));
+  const d = settings.commercial;
+  return (
+    <>
+      <p className="text-xs text-sl-muted">Affiché sur la couverture : un humain à appeler rassure. Laissez vide pour reprendre l&apos;interlocuteur des Paramètres{d.nom ? ` (${d.nom})` : ""}.</p>
+      <div className={grid2}>
+        <Field label="Nom">{(id) => <Input id={id} value={c.nom} placeholder={d.nom} onChange={(e) => up({ nom: e.target.value })} />}</Field>
+        <Field label="Fonction">{(id) => <Input id={id} value={c.fonction ?? ""} placeholder={d.fonction} onChange={(e) => up({ fonction: e.target.value })} />}</Field>
+        <Field label="Téléphone direct">{(id) => <Input id={id} type="tel" value={c.tel ?? ""} placeholder={d.tel} onChange={(e) => up({ tel: e.target.value })} />}</Field>
+        <Field label="E-mail">{(id) => <Input id={id} type="email" value={c.email ?? ""} placeholder={d.email} onChange={(e) => up({ email: e.target.value })} />}</Field>
+      </div>
+    </>
+  );
+}
+
 /* ───────── Conditions ───────── */
 export function ConditionsForm({ p, set }: FormProps) {
   const c = p.conditions;
@@ -241,6 +259,9 @@ export function ConditionsForm({ p, set }: FormProps) {
         <Field label="Durée d'engagement (trimestres)">{(id) => <Input id={id} type="number" min={1} value={c.dureeTrimestres} onChange={(e) => up("dureeTrimestres", num(e.target.value))} />}</Field>
         <Field label="Préavis de dénonciation (jours)">{(id) => <Input id={id} type="number" min={0} value={c.preavisJours} onChange={(e) => up("preavisJours", num(e.target.value))} />}</Field>
       </div>
+      <Field label="Délai de mise en œuvre (facultatif)" hint="Un engagement de délai rassure ; ne le renseignez que s'il est tenable.">
+        {(id) => <Input id={id} value={c.delai ?? ""} placeholder="Ex. Livraison sous 6 semaines après l'acompte" onChange={(e) => up("delai", e.target.value)} />}
+      </Field>
       <Check checked={c.tacitReconduction} onChange={(v) => up("tacitReconduction", v)}>Tacite reconduction</Check>
       <Check checked={c.reactualisationAnnuelle} onChange={(v) => up("reactualisationAnnuelle", v)}>Réactualisation annuelle des tarifs</Check>
       <Check checked={c.prelevementMaintenance} onChange={(v) => up("prelevementMaintenance", v)}>Règlement par prélèvement</Check>

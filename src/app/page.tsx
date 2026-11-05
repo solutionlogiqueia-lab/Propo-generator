@@ -12,8 +12,30 @@ import { numeroSuivant, propositionVide } from "@/lib/defaults";
 import { dateFr, eur, uid } from "@/lib/format";
 import { deleteProposition, replaceAll, saveProposition, usePropositions, useSettings } from "@/lib/store";
 import type { Proposition, Statut } from "@/lib/types";
+import { aRelancer, avecStatut, joursDepuisEnvoi, pipeline, STATUTS } from "@/lib/vente";
 
-const STATUTS: Record<Statut, string> = { brouillon: "Brouillon", envoyee: "Envoyée", signee: "Signée" };
+
+function Kpis({ all }: { all: Proposition[] }) {
+  const k = pipeline(all);
+  const euros = (u: number, m: number) => [u > 0 && `${eur(u)} HT`, m > 0 && `${eur(m)} HT / mois`].filter(Boolean).join(" + ") || "—";
+  const tuiles: [string, string, string][] = [
+    ["En attente de réponse", String(k.enAttente.n), euros(k.enAttente.unique, k.enAttente.mensuel)],
+    ["Signées", String(k.signees.n), euros(k.signees.unique, k.signees.mensuel)],
+    ["À relancer (J+7)", String(k.aRelancer), k.aRelancer ? "Envoyées sans réponse" : "Rien en retard"],
+    ["Taux de signature", k.tauxPct == null ? "—" : `${k.tauxPct} %`, "Signées / réponses et envois"],
+  ];
+  return (
+    <div className="mb-5 grid grid-cols-2 gap-2 md:grid-cols-4">
+      {tuiles.map(([titre, val, sous]) => (
+        <div key={titre} className="rounded-xl border border-sl-line bg-white p-3">
+          <div className="text-[11px] font-semibold uppercase tracking-wide text-sl-muted">{titre}</div>
+          <div className={`text-2xl font-bold tabular-nums ${titre.startsWith("À relancer") && k.aRelancer ? "text-sl-warn" : "text-sl-primary"}`}>{val}</div>
+          <div className="truncate text-xs text-sl-muted">{sous}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default function Home() {
   const router = useRouter();
@@ -80,6 +102,7 @@ export default function Home() {
         </>
       }
     >
+      {all.length > 0 && <Kpis all={all} />}
       <div className="relative mb-4 max-w-sm">
         <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-sl-muted" />
         <Input className="pl-9" placeholder="Rechercher un client, un n°, un projet…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Rechercher" />
@@ -107,11 +130,11 @@ export default function Home() {
                   aria-label="Statut"
                   className="!h-8 w-auto"
                   value={p.statut}
-                  onChange={(e) => saveProposition({ ...p, statut: e.target.value as Statut })}
+                  onChange={(e) => saveProposition(avecStatut(p, e.target.value as Statut))}
                 >
                   {Object.entries(STATUTS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
                 </Select>
-                <Badge tone={p.statut === "signee" ? "ok" : p.statut === "envoyee" ? "accent" : "primary"} className="hidden sm:inline-flex">{STATUTS[p.statut]}</Badge>
+                {aRelancer(p) ? <Badge tone="primary" className="!bg-sl-warn">À relancer · J+{joursDepuisEnvoi(p)}</Badge> : null}
                 <Button variant="ghost" size="icon" aria-label="Dupliquer" onClick={() => dupliquer(p)}><Copy className="h-4 w-4" /></Button>
                 <Button variant="ghost" size="icon" aria-label="Supprimer" onClick={() => { if (confirm(`Supprimer ${p.numero} ?`)) deleteProposition(p.id); }}>
                   <Trash2 className="h-4 w-4 text-sl-warn" />

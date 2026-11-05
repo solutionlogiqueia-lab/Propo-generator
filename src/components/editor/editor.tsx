@@ -1,5 +1,5 @@
 "use client";
-import { ArrowLeft, Briefcase, PenLine, Calculator, FileText, Gift, ListChecks, Printer, Puzzle, Scale, Sparkles, Users } from "lucide-react";
+import { ArrowLeft, Briefcase, Mail, PenLine, UserRound, Calculator, FileText, Gift, ListChecks, Printer, Puzzle, Scale, Sparkles, Users } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -10,9 +10,10 @@ import { PreviewPane } from "@/components/preview/preview-pane";
 import { totauxProposition } from "@/lib/calc";
 import { saveProposition } from "@/lib/store";
 import type { ModeleId, Proposition, Settings, Statut } from "@/lib/types";
+import { avecStatut, mailEnvoi, STATUTS } from "@/lib/vente";
 import { cn } from "@/lib/utils";
 import {
-  BeneficesForm, ClientForm, ConditionsForm, FonctionnalitesForm, FormulesForm, LignesForm, PointsForm, ProjetForm,
+  BeneficesForm, ClientForm, InterlocuteurForm, ConditionsForm, FonctionnalitesForm, FormulesForm, LignesForm, PointsForm, ProjetForm,
 } from "./forms";
 import { SignatureForm } from "./signature-form";
 
@@ -59,6 +60,17 @@ export function Editor({ initial, settings }: { initial: Proposition; settings: 
     };
   }, []);
 
+  const [copie, setCopie] = useState(false);
+  const copierMail = async () => {
+    try {
+      await navigator.clipboard.writeText(mailEnvoi(p, settings));
+      setCopie(true);
+      setTimeout(() => setCopie(false), 2000);
+    } catch {
+      window.prompt("Copiez le mail d'envoi :", mailEnvoi(p, settings));
+    }
+  };
+
   const imprimer = () => {
     const old = document.title;
     document.title = `${p.numero}${p.client.organisation ? " - " + p.client.organisation : ""}`;
@@ -87,12 +99,13 @@ export function Editor({ initial, settings }: { initial: Proposition; settings: 
           aria-label="Statut"
           className="!h-8 w-auto"
           value={p.statut}
-          onChange={(e) => set((x) => ({ ...x, statut: e.target.value as Statut }))}
+          onChange={(e) => set((x) => avecStatut(x, e.target.value as Statut))}
         >
-          <option value="brouillon">Brouillon</option>
-          <option value="envoyee">Envoyée</option>
-          <option value="signee">Signée</option>
+          {Object.entries(STATUTS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
         </Select>
+        <Button size="sm" onClick={copierMail} aria-label="Copier le mail d'envoi">
+          <Mail className="h-4 w-4" /> <span className="hidden sm:inline">{copie ? "Copié !" : "Mail d'envoi"}</span>
+        </Button>
         <Button variant="primary" size="sm" onClick={imprimer}>
           <Printer className="h-4 w-4" /> <span className="sm:hidden">PDF</span><span className="hidden sm:inline">Télécharger en PDF</span>
         </Button>
@@ -160,6 +173,7 @@ export function Editor({ initial, settings }: { initial: Proposition; settings: 
                 Total mise en œuvre : <b className="text-sl-text">{t.unique.ht} € HT</b> · Mensuel : <b className="text-sl-text">{t.mensuel.ht} € HT</b>
               </div>
             </Section>
+            <Section title="Votre interlocuteur" icon={<UserRound className="h-4 w-4" />}><InterlocuteurForm p={p} set={set} settings={settings} /></Section>
             <Section title="6 · Conditions" icon={<ListChecks className="h-4 w-4" />}><ConditionsForm p={p} set={set} /></Section>
             <Section
               title="7 · Signature électronique"

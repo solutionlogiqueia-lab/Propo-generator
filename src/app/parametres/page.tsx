@@ -58,6 +58,19 @@ function Form({ initial }: { initial: Settings }) {
           <Field label="Adresse (facultatif, affichée en pied de page)">{(id) => <Input id={id} value={s.adresse} onChange={(e) => up({ adresse: e.target.value })} />}</Field>
         </section>
         <section className={card}>
+          <h2 className="font-bold">Argumentaire commercial</h2>
+          <p className="text-xs text-sl-muted">Ces éléments apparaissent sur les propositions uniquement s&apos;ils sont renseignés. N&apos;indiquez que des faits vérifiables.</p>
+          <Field label="Interlocuteur par défaut : nom">{(id) => <Input id={id} value={s.commercial.nom} onChange={(e) => up({ commercial: { ...s.commercial, nom: e.target.value } })} />}</Field>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Fonction">{(id) => <Input id={id} value={s.commercial.fonction ?? ""} onChange={(e) => up({ commercial: { ...s.commercial, fonction: e.target.value } })} />}</Field>
+            <Field label="Téléphone direct">{(id) => <Input id={id} type="tel" value={s.commercial.tel ?? ""} onChange={(e) => up({ commercial: { ...s.commercial, tel: e.target.value } })} />}</Field>
+          </div>
+          <Field label="E-mail">{(id) => <Input id={id} type="email" value={s.commercial.email ?? ""} onChange={(e) => up({ commercial: { ...s.commercial, email: e.target.value } })} />}</Field>
+          <Field label="Pourquoi nous choisir (un atout par ligne, 4 max)" hint="Ex. : ancienneté, proximité, support local, nombre de clients : seulement du vrai.">
+            {(id) => <Textarea id={id} rows={4} value={s.atouts.join("\n")} onChange={(e) => up({ atouts: e.target.value.split("\n").slice(0, 4) })} />}
+          </Field>
+        </section>
+        <section className={card}>
           <h2 className="font-bold">Mentions et valeurs par défaut</h2>
           <Field label="Phrase CGV">{(id) => <Textarea id={id} rows={3} value={s.phraseCgv} onChange={(e) => up({ phraseCgv: e.target.value })} />}</Field>
           <div className="grid grid-cols-2 gap-3">

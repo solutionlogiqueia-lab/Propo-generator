@@ -4,7 +4,7 @@ import { totauxProposition } from "@/lib/calc";
 import { conditionsTexte } from "@/lib/conditions";
 import { ICONS, iconKey } from "@/lib/icons";
 import {
-  Badge, BonPourAccord, chunk, ClientBlock, ConditionsList, H2, Hero, Kicker, LignesTable, MetaRow,
+  Atouts, Badge, BonPourAccord, chunk, Etapes, ClientBlock, ConditionsList, H2, Hero, Kicker, LignesTable, MetaRow,
   Pastille, PointCard, Sheet, TotauxBox, type ModelProps, type PageFn,
 } from "./parts";
 
@@ -16,6 +16,8 @@ export function pagesProjet({ p, settings }: ModelProps): PageFn[] {
   const t = totauxProposition(p);
   const pages: PageFn[] = [];
   const mp = { p, settings };
+  // Blocs commerciaux de couverture : seulement si la page a la place (sinon ils débordent)
+  const roomy = p.projet.contexte.length <= 260 && p.points_cles.length <= 3;
 
   /* P.1 Couverture */
   pages.push((c) => (
@@ -25,13 +27,15 @@ export function pagesProjet({ p, settings }: ModelProps): PageFn[] {
           <Hero p={p} />
           <ClientBlock p={p} />
         </div>
-        <MetaRow p={p} />
+        <MetaRow p={p} settings={settings} />
         {p.projet.contexte && (
           <div className="keep">
             <Kicker>Votre projet</Kicker>
             <p className="mt-1 text-[14.5px] leading-relaxed text-sl-text [overflow-wrap:anywhere]">{p.projet.contexte}</p>
           </div>
         )}
+        {roomy && <Atouts settings={settings} />}
+        {roomy && <Etapes p={p} />}
         {p.points_cles.length > 0 && (
           <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${Math.min(p.points_cles.length, 4) <= 3 ? Math.min(p.points_cles.length, 3) : 2}, minmax(0,1fr))` }}>
             {p.points_cles.slice(0, 4).map((pt, i) => (
