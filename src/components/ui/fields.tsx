@@ -3,10 +3,10 @@ import { forwardRef, useId, type InputHTMLAttributes, type ReactNode, type Selec
 import { cn } from "@/lib/utils";
 
 const base =
-  "w-full rounded-lg border border-sl-line bg-white px-3 text-sm text-sl-text placeholder:text-sl-muted/70 focus:border-sl-accent focus:outline-2 focus:outline-sl-accent/40";
+  "w-full rounded-lg border border-sl-line bg-white px-3 text-base text-sl-text sm:text-sm placeholder:text-sl-muted/70 focus:border-sl-accent focus:outline-2 focus:outline-sl-accent/40";
 
 export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(
-  ({ className, ...p }, ref) => <input ref={ref} className={cn(base, "h-9", className)} {...p} />,
+  ({ className, ...p }, ref) => <input ref={ref} className={cn(base, "h-10 sm:h-9", className)} {...p} />,
 );
 Input.displayName = "Input";
 
@@ -16,7 +16,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<H
 Textarea.displayName = "Textarea";
 
 export const Select = forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSelectElement>>(
-  ({ className, ...p }, ref) => <select ref={ref} className={cn(base, "h-9", className)} {...p} />,
+  ({ className, ...p }, ref) => <select ref={ref} className={cn(base, "h-10 sm:h-9", className)} {...p} />,
 );
 Select.displayName = "Select";
 
@@ -71,7 +71,7 @@ export function Check({
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="h-4 w-4 accent-sl-primary"
+        className="h-5 w-5 accent-sl-primary sm:h-4 sm:w-4"
       />
       {children}
     </label>

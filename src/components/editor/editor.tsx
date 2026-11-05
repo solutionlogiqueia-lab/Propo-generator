@@ -77,12 +77,12 @@ export function Editor({ initial, settings }: { initial: Proposition; settings: 
     <div className="flex h-dvh flex-col print:block print:h-auto">
       <header className="no-print flex flex-wrap items-center gap-2 border-b border-sl-line bg-white px-4 py-2">
         <Link href="/" className="inline-flex h-8 items-center gap-1 rounded-lg px-2 text-sm font-semibold text-sl-muted hover:bg-sl-soft">
-          <ArrowLeft className="h-4 w-4" /> Propositions
+          <ArrowLeft className="h-4 w-4" /> <span className="hidden sm:inline">Propositions</span>
         </Link>
-        <div className="min-w-0 flex-1 truncate text-sm font-bold text-sl-text">
+        <div className="hidden min-w-0 flex-1 truncate text-sm font-bold text-sl-text sm:block">
           {p.numero} <span className="font-normal text-sl-muted">· {p.client.organisation || "Nouveau client"}</span>
         </div>
-        <span className="text-xs text-sl-muted" aria-live="polite">{saved ? "Enregistré" : "Enregistrement…"}</span>
+        <span className="ml-auto text-xs text-sl-muted sm:ml-0" aria-live="polite">{saved ? "Enregistré" : "Enregistrement…"}</span>
         <Select
           aria-label="Statut"
           className="!h-8 w-auto"
@@ -94,13 +94,13 @@ export function Editor({ initial, settings }: { initial: Proposition; settings: 
           <option value="signee">Signée</option>
         </Select>
         <Button variant="primary" size="sm" onClick={imprimer}>
-          <Printer className="h-4 w-4" /> Télécharger en PDF
+          <Printer className="h-4 w-4" /> <span className="sm:hidden">PDF</span><span className="hidden sm:inline">Télécharger en PDF</span>
         </Button>
       </header>
 
       {/* Sélecteur de modèle */}
       <div className="no-print border-b border-sl-line bg-white px-4 py-2">
-        <div className="grid grid-cols-2 gap-2 lg:grid-cols-4" role="radiogroup" aria-label="Modèle de proposition">
+        <div className="flex gap-2 overflow-x-auto pb-1 lg:grid lg:grid-cols-4 lg:overflow-visible lg:pb-0" role="radiogroup" aria-label="Modèle de proposition">
           {MODELES.map((m) => {
             const Icon = MODEL_ICON[m.id];
             const on = p.modele === m.id;
@@ -112,16 +112,16 @@ export function Editor({ initial, settings }: { initial: Proposition; settings: 
                 aria-checked={on}
                 onClick={() => set((x) => ({ ...x, modele: m.id }))}
                 className={cn(
-                  "flex cursor-pointer items-center gap-3 rounded-xl border p-2 text-left transition-colors",
+                  "flex shrink-0 cursor-pointer items-center gap-2 rounded-xl border p-2 text-left transition-colors lg:shrink lg:gap-3",
                   on ? "border-sl-primary bg-sl-soft" : "border-sl-line bg-white hover:bg-sl-soft",
                 )}
               >
-                <span className={cn("grid h-9 w-9 shrink-0 place-items-center rounded-lg text-white", on ? "bg-sl-primary" : "bg-sl-accent")}>
+                <span className={cn("grid h-8 w-8 shrink-0 place-items-center rounded-lg text-white lg:h-9 lg:w-9", on ? "bg-sl-primary" : "bg-sl-accent")}>
                   <Icon className="h-[18px] w-[18px]" />
                 </span>
                 <span className="min-w-0">
                   <span className="block truncate text-[13px] font-bold text-sl-text">{m.nom}</span>
-                  <span className="block truncate text-[11px] text-sl-muted">{m.pages} · {m.desc}</span>
+                  <span className="block truncate text-[11px] text-sl-muted"><span className="lg:hidden">{m.pages}</span><span className="hidden lg:inline">{m.pages} · {m.desc}</span></span>
                 </span>
               </button>
             );

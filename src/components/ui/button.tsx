@@ -13,7 +13,7 @@ const button = cva(
         ghost: "text-sl-muted hover:bg-sl-soft hover:text-sl-text",
         danger: "border border-sl-line bg-white text-sl-warn hover:bg-sl-soft",
       },
-      size: { sm: "h-8 px-3", md: "h-10 px-4", icon: "h-8 w-8" },
+      size: { sm: "h-9 px-3 sm:h-8", md: "h-10 px-4", icon: "h-10 w-10 sm:h-8 sm:w-8" },
     },
     defaultVariants: { variant: "outline", size: "md" },
   },

@@ -4,7 +4,7 @@ import { conditionsTexte } from "@/lib/conditions";
 import { eur } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import {
-  Badge, BonPourAccord, chunk, ClientBlock, ConditionsList, H2, Hero, Kicker, LignesTable, MetaRow,
+  Badge, BonPourAccord, CheckItem, chunk, ClientBlock, ConditionsList, H2, Hero, Kicker, LignesTable, MetaRow,
   PointCard, Sheet, TotauxBox, type ModelProps, type PageFn,
 } from "./parts";
 
@@ -183,11 +183,21 @@ export function pagesFormules({ p, settings }: ModelProps): PageFn[] {
       <div className="flex h-full flex-col justify-between gap-4">
         <div className="flex flex-col gap-4">
         <H2 kicker="Validation">{`Formule ${defaut?.nom ?? ""} : détail et accord`}</H2>
-        {inline ? <LignesTable lignes={lignesDefaut} ttc={p.afficherTTC} tvaTaux={p.tvaTaux} /> : null}
+        {inline ? <LignesTable lignes={lignesDefaut} ttc={p.afficherTTC} tvaTaux={p.tvaTaux} dense /> : null}
         <TotauxBox t={tDefaut} p={p} />
+        {defaut && defaut.arguments.filter(Boolean).length > 0 && inline && (
+          <div className="keep rounded-2xl bg-sl-soft p-3">
+            <Kicker className="mb-1.5">{`Pourquoi la formule ${defaut.nom}`}</Kicker>
+            <ul className="grid grid-cols-2 gap-x-5 gap-y-2 text-[12px] leading-snug">
+              {defaut.arguments.filter(Boolean).slice(0, 4).map((a, i) => (
+                <CheckItem key={i}>{a}</CheckItem>
+              ))}
+            </ul>
+          </div>
+        )}
         </div>
         <div className="flex flex-col gap-3">
-          <BonPourAccord p={p} settings={settings} formules={formules} />
+          <BonPourAccord p={p} settings={settings} formules={formules} compact />
           <ConditionsList items={conditionsTexte(p, settings).slice(0, -1)} />
         </div>
       </div>

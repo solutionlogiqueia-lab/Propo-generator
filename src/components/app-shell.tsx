@@ -13,8 +13,8 @@ export function AppShell({ children, title, actions }: { children: ReactNode; ti
         <div className="mx-auto flex max-w-5xl items-center gap-4 px-4 py-3">
           {settings && <Logo settings={settings} />}
           <nav className="ml-auto flex items-center gap-1 text-sm font-semibold">
-            <Link href="/" className="inline-flex h-8 items-center gap-1.5 rounded-lg px-3 text-sl-muted hover:bg-sl-soft"><FileText className="h-4 w-4" />Propositions</Link>
-            <Link href="/parametres" className="inline-flex h-8 items-center gap-1.5 rounded-lg px-3 text-sl-muted hover:bg-sl-soft"><Cog className="h-4 w-4" />Paramètres</Link>
+            <Link href="/" aria-label="Propositions" className="inline-flex h-10 items-center gap-1.5 rounded-lg px-3 text-sl-muted hover:bg-sl-soft sm:h-8"><FileText className="h-4 w-4" /><span className="hidden min-[400px]:inline">Propositions</span></Link>
+            <Link href="/parametres" aria-label="Paramètres" className="inline-flex h-10 items-center gap-1.5 rounded-lg px-3 text-sl-muted hover:bg-sl-soft sm:h-8"><Cog className="h-4 w-4" /><span className="hidden min-[400px]:inline">Paramètres</span></Link>
           </nav>
         </div>
       </header>

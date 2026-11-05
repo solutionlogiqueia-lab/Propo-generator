@@ -95,11 +95,11 @@ export default function Home() {
             const t = totauxProposition(p);
             return (
               <li key={p.id} className="flex flex-wrap items-center gap-3 rounded-xl border border-sl-line bg-white p-3">
-                <Link href={`/editeur?id=${p.id}`} className="min-w-0 flex-1">
+                <Link href={`/editeur?id=${p.id}`} className="min-w-0 basis-full sm:basis-0 sm:flex-1">
                   <div className="truncate font-bold text-sl-text">{p.client.organisation || "Client à renseigner"}</div>
                   <div className="truncate text-sm text-sl-muted">{p.numero} · {p.projet.titre || "Sans titre"} · {dateFr(p.date)}</div>
                 </Link>
-                <div className="text-right text-sm tabular-nums">
+                <div className="mr-auto text-sm tabular-nums sm:mr-0 sm:text-right">
                   {t.unique.ht > 0 && <div className="font-bold">{eur(t.unique.ht)} HT</div>}
                   {t.mensuel.ht > 0 && <div className="text-sl-muted">{eur(t.mensuel.ht)} HT / mois</div>}
                 </div>
